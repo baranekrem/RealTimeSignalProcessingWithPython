@@ -22,7 +22,3 @@ class LowPassFilter(object):
 
     def GetWarping(self):
         return (2 / self.__T) * arctan(2 * pi * self.GetFrequency() * self.__T / 2) / (2 * pi)
-
-
-
-
