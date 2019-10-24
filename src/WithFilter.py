@@ -13,6 +13,8 @@ import pyaudio
 import matplotlib.pyplot as plt
 import Filter
 
+filterState = 1
+
 class SpectrumAnalyzer:
     FORMAT = pyaudio.paFloat32
     CHANNELS = 1
@@ -30,11 +32,12 @@ class SpectrumAnalyzer:
     spec_x = 0
     spec_y = 0
 
-    data = []
+    data = [0] * CHUNK
     filteredata = []
 
+    myFilter = Filter.LowPassFilter(data, R, C, Ts)
+
     def __init__(self):
-        print()
         self.pa = pyaudio.PyAudio()
 
         self.stream = self.pa.open(
@@ -49,31 +52,23 @@ class SpectrumAnalyzer:
     def loop(self):
         try:
             while True :
-                # Ses Alımı Başladı.
-                self.data = self.audioinput()
-                # Ses Alımı Bitti.
+                # Ses Alımı.
+                self.data = self.stream.read(self.CHUNK)
+                self.data = np.fromstring(self.data, np.float32)
 
-                #Filtreleme Başlıyor.
-                myFilter = Filter.LowPassFilter(self.data, self.R, self.C, self.Ts)
-                self.filteredata = myFilter.FilterApply()
-                self.data = self.filteredata
-                # Filtreleme Bitti.
+                # Filtreleme.
+                if filterState == 1:
+                    self.filteredata = self.myFilter.FilterApply(self.data)
+                    self.data = self.filteredata
 
-                # FFT Alınıyor.
+                # FFT Alma.
                 self.fft()
 
-                # Grafiğe Aktarılıyor.
+                # Grafiğe Çizme.
                 self.graphplot()
 
         except KeyboardInterrupt:
-            self.pa.close()
-
-        print("End...")
-
-    def audioinput(self):
-        ret = self.stream.read(self.CHUNK)
-        ret = np.fromstring(ret, np.float32)
-        return ret
+            print("End...")
 
     def fft(self):
         self.wave_x = range(self.START, self.START + self.N)
