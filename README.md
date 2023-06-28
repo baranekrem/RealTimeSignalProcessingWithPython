@@ -8,7 +8,7 @@ For all about the project you must visit my website :)
 
 ## Authors
 
-* **BARAN EKREM** - https://www.baranekrem.net - baranekrem@outlook.com
+* **BARAN EKREM** - https://www.baranekrem.com - baranekrem@outlook.com
 
 ## License
 
